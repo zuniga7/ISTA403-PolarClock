@@ -122,6 +122,7 @@ int lenFeb(boolean isleap) {
   }
 }
 
+// takes care of moving the time rings from one position to the other
 void timeTransition() {
   Ani.to(this, 1.0, "secPos", (PI * second())/30 - PI/2, Ani.ELASTIC_OUT);
   Ani.to(this, 1.0, "minPos", (PI * minute())/30 - PI/2, Ani.ELASTIC_OUT);
