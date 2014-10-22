@@ -7,7 +7,7 @@ import de.looksgood.ani.easing.*;
  */
 
 //dials to set alarm hour, min
-int alarmHour = 16;
+int alarmHour = 22;
 int alarmMin = 49;
 boolean linear = false;
 
@@ -90,7 +90,7 @@ void drawConcentricClock() {
     //hour hand
     stroke(0, 0, 255);
     strokeWeight(6);
-    arc(150, 150, 200, 200, -HALF_PI, (PI * alarmHour)/30 - PI/2);
+    arc(150, 150, 200, 200, -HALF_PI, (PI * alarmHour)/12 - PI/2);
     strokeWeight(12);
     arc(150, 150, 200, 200, -HALF_PI, hourPos);
 
