@@ -9,6 +9,7 @@ import de.looksgood.ani.easing.*;
 //dials to set alarm hour, min
 int alarmHour = 16;
 int alarmMin = 49;
+boolean linear = false;
 
 boolean alarmOn = true;
 int febLength = lenFeb(isLeap(year()));
@@ -25,11 +26,11 @@ float dayPos = (((2 * PI * day()) / monthLengths[month()-1]) - PI/2);
 float monthPos = (PI * month())/6- PI/2;
 
 void setup () {
-  size(300, 300);
+  size(600, 600);
   //allows window to be resized
-  //if(frame != null) {
-  //  frame.setResizable(true);
-  //}
+  if (frame != null) {
+    frame.setResizable(true);
+  }
   fill(255);
   textSize(32);
   textAlign(CENTER);
@@ -73,28 +74,44 @@ void drawConcentricClock() {
   strokeWeight(12);
   noFill();
 
-  //second hand
-  stroke(0, 255, 255);
-  arc(150, 150, 250, 250, -HALF_PI, secPos);
-  //line(0, 5, map(second(), 0, 59, 0, width), 5);
+  if (!linear) {
 
-  //minute hand
-  stroke(0, 128, 128);
-  //line(0, 15, map(minute(), 0, 59, 0, width), 15);
-  arc(150, 150, 225, 225, -HALF_PI, minPos);
+    //second hand
+    stroke(0, 255, 255);
+    arc(150, 150, 250, 250, -HALF_PI, secPos);
 
-  //hour hand
-  stroke(0, 0, 255);
-  //line(0, 25, map(hour(), 0, 23, 0, width), 25);
-  arc(150, 150, 200, 200, -HALF_PI, hourPos);
+    //minute hand
+    stroke(0, 128, 128);
+    strokeWeight(6);
+    arc(150, 150, 225, 225, -HALF_PI, (PI * alarmMin)/30 - PI/2);
+    strokeWeight(12);
+    arc(150, 150, 225, 225, -HALF_PI, minPos);
 
-  //day hand
-  stroke(0, 0, 128);
-  arc(150, 150, 175, 175, -HALF_PI, dayPos);
+    //hour hand
+    stroke(0, 0, 255);
+    strokeWeight(6);
+    arc(150, 150, 200, 200, -HALF_PI, (PI * alarmHour)/30 - PI/2);
+    strokeWeight(12);
+    arc(150, 150, 200, 200, -HALF_PI, hourPos);
 
-  //month hand
-  stroke(0, 64, 128);
-  arc(150, 150, 150, 150, -HALF_PI, monthPos);
+    //day hand
+    stroke(0, 0, 128);
+    arc(150, 150, 175, 175, -HALF_PI, dayPos);
+
+    //month hand
+    stroke(0, 64, 128);
+    arc(150, 150, 150, 150, -HALF_PI, monthPos);
+
+
+    // linear
+  } else {
+    stroke(0, 255, 255);
+    line(0, height/2 - 12, map(second(), 0, 59, 0, width), height/2 - 12);
+    stroke(0, 128, 128);
+    line(0, height/2, map(minute(), 0, 59, 0, width), height/2);
+    stroke(0, 0, 255);
+    line(0, height/2 + 12, map(hour(), 0, 23, 0, width), height/2 + 12);
+  }
 }
 
 void alarmAction() {
@@ -133,5 +150,10 @@ void timeTransition() {
   Ani.to(this, 1.0, "hourPos", (PI * hour())/12 - PI/2, Ani.ELASTIC_OUT);
   Ani.to(this, 1.0, "dayPos", (((2 * PI * day()) / monthLengths[month()-1]) - PI/2), Ani.ELASTIC_OUT);
   Ani.to(this, 1.0, "monthPos", (PI * month())/6- PI/2, Ani.ELASTIC_OUT);
+}
+
+// change linear on key pressed
+void keyPressed() {
+  linear = !linear;
 }
 
