@@ -155,5 +155,21 @@ void timeTransition() {
 // change linear on key pressed
 void keyPressed() {
   linear = !linear;
+
+  if (linear) {
+    secPos = second();
+    minPos = minute();
+    hourPos = hour();
+  } else {
+    secPos = (PI * second())/30 - PI/2;
+    minPos = (PI * minute())/30 - PI/2;
+    hourPos = (PI * hour())/12 - PI/2;
+  }
+}
+
+// adjust alarm time on drag... is alarmHour working?
+void mouseDragged() {
+  alarmMin = (int) map(mouseX, 0, width, 0, 59);
+  alarmHour =(int) map(mouseY, 0, height, 0, 23);
 }
 
