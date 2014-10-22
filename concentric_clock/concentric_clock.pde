@@ -7,8 +7,8 @@ import de.looksgood.ani.easing.*;
  */
 
 //dials to set alarm hour, min
-int alarmHour = 1;
-int alarmMin = 9;
+int alarmHour = 16;
+int alarmMin = 49;
 
 boolean alarmOn = true;
 int febLength = lenFeb(isLeap(year()));
@@ -37,6 +37,8 @@ void setup () {
   Ani.init(this);
 }
 
+// keep track of when these change in the draw function so that 
+// we can trigger the animations
 int second = second();
 int minute = minute();
 int hour = hour();
@@ -57,6 +59,8 @@ void draw() {
   if (second != second()) {
     timeTransition();
     second = second();
+    minute = minute();
+    hour = hour();
   }
   drawConcentricClock();
 
