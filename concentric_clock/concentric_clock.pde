@@ -1,3 +1,10 @@
+import ddf.minim.spi.*;
+import ddf.minim.signals.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.ugens.*;
+import ddf.minim.effects.*;
+
 import de.looksgood.ani.*;
 import de.looksgood.ani.easing.*;
 
@@ -5,6 +12,11 @@ import de.looksgood.ani.easing.*;
  * @author Haziel Zuniga
  * @author Stephen Kovalsky
  */
+
+Minim minim;
+AudioOutput out;
+Oscil      wave;
+Frequency  currentFreq;
 
 //dials to set alarm hour, min
 int alarmHour = 22;
@@ -32,9 +44,9 @@ void setup () {
     frame.setResizable(true);
   }
   fill(255);
-  textSize(32);
+  
   textAlign(CENTER);
-
+  minim = new Minim(this);
   Ani.init(this);
 }
 
@@ -43,15 +55,19 @@ void setup () {
 int second = second();
 int minute = minute();
 int hour = hour();
+
+
 void draw() {
+  textSize(width/12);
+
+  //click to turn to alarm off
+  if (keyPressed && key == 'a') {
+    alarmOn = !alarmOn;
+
+  }
 
   if (alarmOn==true && (int)hour == alarmHour && (int)minute == alarmMin) {
     alarmAction();
-
-    //click to turn to alarm off
-    if (mousePressed) {
-      alarmOn = false;
-    }
   } else {
     background(0);
   }
@@ -78,29 +94,48 @@ void drawConcentricClock() {
 
     //second hand
     stroke(0, 255, 255);
-    arc(150, 150, 250, 250, -HALF_PI, secPos);
+    arc(width/2, height/2, width/2, height/2, -HALF_PI, secPos);
 
-    //minute hand
+    //minute hand time
     stroke(0, 128, 128);
-    strokeWeight(6);
-    arc(150, 150, 225, 225, -HALF_PI, (PI * alarmMin)/30 - PI/2);
     strokeWeight(12);
-    arc(150, 150, 225, 225, -HALF_PI, minPos);
+    arc(width/2, height/2, (width/2)-25, (height/2)-25, -HALF_PI, minPos);
 
-    //hour hand
-    stroke(0, 0, 255);
-    strokeWeight(6);
-    arc(150, 150, 200, 200, -HALF_PI, (PI * alarmHour)/12 - PI/2);
+    //hour hand time
+    stroke(0, 0, 250);
     strokeWeight(12);
-    arc(150, 150, 200, 200, -HALF_PI, hourPos);
+    arc(width/2, height/2, (width/2)-50, (height/2)-50, -HALF_PI, hourPos);
 
     //day hand
+    strokeWeight(12);
     stroke(0, 0, 128);
-    arc(150, 150, 175, 175, -HALF_PI, dayPos);
+    arc(width/2, height/2, (width/2)-75, (height/2)-75, -HALF_PI, dayPos);
 
     //month hand
     stroke(0, 64, 128);
-    arc(150, 150, 150, 150, -HALF_PI, monthPos);
+    arc(width/2, height/2, (width/2)-100, (height/2)-100, -HALF_PI, monthPos);
+
+    if (mousePressed) {
+      //minute hand alarm
+      stroke(0, 250, 0);
+      strokeWeight(6);
+      arc(width/2, height/2, (width/2)-25, (height/2)-25, -HALF_PI, (PI * alarmMin)/30 - PI/2);
+
+      //hour hand alarm
+      stroke(250, 0, 0);
+      strokeWeight(6);
+      arc(width/2, height/2, (width/2)-50, (height/2)-50, -HALF_PI, (PI * alarmHour)/12 - PI/2);
+
+      //print alarm time
+      textSize(width/16);
+      String amOrPm = (alarmHour>=12 && alarmHour < 24)? "PM" : "AM";
+
+      if (alarmHour%12 == 0) {
+        text("Alarm Time: " + 12 + ":" + nf(abs(alarmMin%60), 2)+ " " +amOrPm, width/2, height-(width/16));
+      } else {
+        text("Alarm Time: " + abs(alarmHour%12) + ":" +nf(abs(alarmMin%60), 2)+ " " +amOrPm, width/2, height-(width/16));
+      }
+    }
 
 
     // linear
@@ -154,16 +189,18 @@ void timeTransition() {
 
 // change linear on key pressed
 void keyPressed() {
-  linear = !linear;
+  if (keyCode == TAB) {
+    linear = !linear;
 
-  if (linear) {
-    secPos = second();
-    minPos = minute();
-    hourPos = hour();
-  } else {
-    secPos = (PI * second())/30 - PI/2;
-    minPos = (PI * minute())/30 - PI/2;
-    hourPos = (PI * hour())/12 - PI/2;
+    if (linear) {
+      secPos = second();
+      minPos = minute();
+      hourPos = hour();
+    } else {
+      secPos = (PI * second())/30 - PI/2;
+      minPos = (PI * minute())/30 - PI/2;
+      hourPos = (PI * hour())/12 - PI/2;
+    }
   }
 }
 
